@@ -8,6 +8,23 @@ using Scheduler.Models;
 
 namespace Scheduler.Controllers
 {
+    [Route("api/[controller]")]
+    public class ValuesController : Controller
+    {
+        private readonly RandomStringProvider _randomStringProvider;
+
+        public ValuesController(RandomStringProvider provider)
+        {
+            this._randomStringProvider = provider;
+        }
+
+        [HttpGet]
+        public string Get()
+        {
+            return _randomStringProvider.RandomString;
+        }
+    }
+
     public class HomeController : Controller
     {
         public IActionResult Index()
