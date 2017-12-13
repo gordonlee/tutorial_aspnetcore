@@ -4,16 +4,21 @@
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.All" Version="2.0.0" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.0.1" />
   </ItemGroup>
   <ItemGroup>
     <DotNetCliToolReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Tools" Version="2.0.0" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Pages\tutorial\" />
+    <Folder Include="Data\" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="Pages\tutorial\Index_tutorial2.cshtml.cs">
       <DependentUpon>Index_tutorial2.cshtml</DependentUpon>
+    </Compile>
+    <Compile Update="Pages\Create.cshtml.cs">
+      <DependentUpon>Create.cshtml</DependentUpon>
     </Compile>
   </ItemGroup>
 </Project>
