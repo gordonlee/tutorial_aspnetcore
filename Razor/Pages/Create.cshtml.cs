@@ -31,9 +31,5 @@ namespace web.Pages
             await _db.SaveChangesAsync();
             return RedirectToPage("/Index");
         }
-
-        public void OnGet()
-        {
-        }
     }
 }

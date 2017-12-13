@@ -20,5 +20,8 @@
     <Compile Update="Pages\Create.cshtml.cs">
       <DependentUpon>Create.cshtml</DependentUpon>
     </Compile>
+    <Compile Update="Pages\Edit.cshtml.cs">
+      <DependentUpon>Edit.cshtml</DependentUpon>
+    </Compile>
   </ItemGroup>
 </Project>
