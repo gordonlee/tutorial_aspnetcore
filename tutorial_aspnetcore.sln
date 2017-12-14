@@ -3,7 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.26730.10
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Scheduler", "Scheduler\Scheduler.csproj", "{E5401802-1B51-4FE3-A5A9-6482C5CAA8BF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheduler", "Scheduler\Scheduler.csproj", "{E5401802-1B51-4FE3-A5A9-6482C5CAA8BF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "multiple_dbcontext_web", "multiple_dbcontext_web\multiple_dbcontext_web.csproj", "{DFAA405C-4319-425B-B78E-275AF1643CA3}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -15,6 +17,10 @@ Global
 		{E5401802-1B51-4FE3-A5A9-6482C5CAA8BF}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E5401802-1B51-4FE3-A5A9-6482C5CAA8BF}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E5401802-1B51-4FE3-A5A9-6482C5CAA8BF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
