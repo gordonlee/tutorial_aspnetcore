@@ -14,6 +14,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "context_client_console", "c
 		{59A93ABB-3212-4C53-BCC9-2BE4215AC46D} = {59A93ABB-3212-4C53-BCC9-2BE4215AC46D}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "concurrency", "concurrency\concurrency.csproj", "{29D41360-5902-45F3-935A-7B4B1EC2410E}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -36,6 +38,10 @@ Global
 		{14DCB06B-5002-474E-9E2A-5D8697ACAD3A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{14DCB06B-5002-474E-9E2A-5D8697ACAD3A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{14DCB06B-5002-474E-9E2A-5D8697ACAD3A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
