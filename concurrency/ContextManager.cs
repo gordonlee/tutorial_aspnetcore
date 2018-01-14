@@ -130,3 +130,83 @@ namespace concurrency
 		}
 	}
 }
+
+
+namespace concurrency.ConcurrentVersion
+{
+    public class ContextManagerOptions
+    {
+        public ContextManagerOptions()
+        {
+            SpinCountOnDequeue = 1000;
+        }
+
+        public int SpinCountOnDequeue { get; set; }
+    }
+
+
+    public class ContextManager : IManager
+    {
+        ConcurrentDictionary<int, ConcurrentQueue<Element>> dict
+        = new ConcurrentDictionary<int, ConcurrentQueue<Element>>();
+
+        ContextManagerOptions options;
+
+        public ContextManager(ContextManagerOptions _options)
+        {
+            options = _options;
+        }
+
+        public bool CreateContextPool(int key)
+        {
+            var newQueue = new ConcurrentQueue<Element>();
+            var queue = dict.GetOrAdd(key, newQueue);
+
+            //FIXME: newQueue와 queue의 비교는 주소값 비교여야 한다.
+            if (newQueue == queue)
+            {
+                return true;
+            }
+            return false;
+        }
+
+        public Element GetContext(int key)
+        {
+            ConcurrentQueue<Element> queue = null;
+            if (!dict.TryGetValue(key, out queue))
+            {
+                // not found in dictionary
+                return null;
+            }
+
+            Element element = null;
+            for (int i = 0; i < options.SpinCountOnDequeue; ++i)
+            {
+                if(queue.TryDequeue(out element))
+                {
+                    return element;
+                }    
+            }
+
+            // not found on queue.
+            // we have to choose between resizing queue size or just create new one
+            //FIXME: handling later.
+            return new Element();
+        }
+
+        public bool PushContext(int key, Element element)
+        {
+			ConcurrentQueue<Element> queue = null;
+			if (!dict.TryGetValue(key, out queue))
+			{
+                // not found in dictionary
+                return false;
+			}
+
+            queue.Enqueue(element);
+            return true;
+        }
+
+
+    }
+}
