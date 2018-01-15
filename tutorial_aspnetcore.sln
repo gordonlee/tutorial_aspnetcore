@@ -14,7 +14,12 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "context_client_console", "c
 		{59A93ABB-3212-4C53-BCC9-2BE4215AC46D} = {59A93ABB-3212-4C53-BCC9-2BE4215AC46D}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "concurrency", "concurrency\concurrency.csproj", "{29D41360-5902-45F3-935A-7B4B1EC2410E}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "concurrency", "concurrency\concurrency.csproj", "{29D41360-5902-45F3-935A-7B4B1EC2410E}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AA0CB46E-2772-476F-B1DA-75FEA7742D07} = {AA0CB46E-2772-476F-B1DA-75FEA7742D07}
+	EndProjectSection
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceChecker", "PerformanceChecker\PerformanceChecker.csproj", "{AA0CB46E-2772-476F-B1DA-75FEA7742D07}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -42,6 +47,10 @@ Global
 		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{29D41360-5902-45F3-935A-7B4B1EC2410E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AA0CB46E-2772-476F-B1DA-75FEA7742D07}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AA0CB46E-2772-476F-B1DA-75FEA7742D07}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AA0CB46E-2772-476F-B1DA-75FEA7742D07}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AA0CB46E-2772-476F-B1DA-75FEA7742D07}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

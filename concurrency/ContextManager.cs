@@ -18,8 +18,10 @@ namespace concurrency
 
 	interface IManager
 	{
+		bool CreatePool(int key);
+		bool HasPool(int key);
 		Element GetContext(int key);
-
+		bool PushContext(int key, Element element);
 	}
 
 	public class ElementWrapper : IDisposable
@@ -41,7 +43,7 @@ namespace concurrency
 		Element element;
 	}
 
-    public class ContextManager : IManager
+    public class ContextManager 
     {
 		static ContextManager instance = new ContextManager();
 
@@ -134,79 +136,158 @@ namespace concurrency
 
 namespace concurrency.ConcurrentVersion
 {
-    public class ContextManagerOptions
-    {
-        public ContextManagerOptions()
-        {
-            SpinCountOnDequeue = 1000;
-        }
+	public enum OverFlowAction
+	{
+		Unknown = 0,
+		CreateNewOne,
+		WaitForOthers,
+	}
 
-        public int SpinCountOnDequeue { get; set; }
+	public class ContextManagerOptions
+	{
+		public ContextManagerOptions()
+		{
+			SpinCountOnDequeue = 1000;
+			OverFlowAction = OverFlowAction.CreateNewOne;
+			BucketSize = 32;
+		}
+
+		public int SpinCountOnDequeue { get; set; }
+		public OverFlowAction OverFlowAction { get; set; }
+
+		public int BucketSize { get; set; }
     }
 
 
     public class ContextManager : IManager
     {
-        ConcurrentDictionary<int, ConcurrentQueue<Element>> dict
-        = new ConcurrentDictionary<int, ConcurrentQueue<Element>>();
+        ConcurrentDictionary<int, ContextPool> dict
+        = new ConcurrentDictionary<int, ContextPool>();
 
         ContextManagerOptions options;
 
         public ContextManager(ContextManagerOptions _options)
         {
             options = _options;
-        }
+		}
 
-        public bool CreateContextPool(int key)
+        public bool CreatePool(int key)
         {
-            var newQueue = new ConcurrentQueue<Element>();
-            var queue = dict.GetOrAdd(key, newQueue);
-
-            //FIXME: newQueue와 queue의 비교는 주소값 비교여야 한다.
-            if (newQueue == queue)
-            {
-                return true;
-            }
-            return false;
+            var newQueue = new ContextPool(options);
+            return dict.TryAdd(key, newQueue);
         }
+
+		public bool HasPool(int key)
+		{
+			ContextPool queue = null;
+			if (!dict.TryGetValue(key, out queue))
+			{
+				return false;
+			}
+			return true;
+		}
 
         public Element GetContext(int key)
         {
-            ConcurrentQueue<Element> queue = null;
+			ContextPool queue = null;
             if (!dict.TryGetValue(key, out queue))
             {
                 // not found in dictionary
                 return null;
             }
 
-            Element element = null;
-            for (int i = 0; i < options.SpinCountOnDequeue; ++i)
-            {
-                if(queue.TryDequeue(out element))
-                {
-                    return element;
-                }    
-            }
-
-            // not found on queue.
-            // we have to choose between resizing queue size or just create new one
-            //FIXME: handling later.
-            return new Element();
+			return queue.GetContext();
         }
 
         public bool PushContext(int key, Element element)
         {
-			ConcurrentQueue<Element> queue = null;
+			ContextPool queue = null;
 			if (!dict.TryGetValue(key, out queue))
 			{
                 // not found in dictionary
                 return false;
 			}
 
-            queue.Enqueue(element);
-            return true;
+			return queue.PushContext(element);
         }
-
-
     }
+
+	public class ContextPool
+	{
+		ContextManagerOptions options;
+
+		int queueSize;
+
+		ConcurrentQueue<Element[]> bucket = new ConcurrentQueue<Element[]>();
+		ConcurrentQueue<Element> freeQueue = new ConcurrentQueue<Element>();
+
+		public ContextPool(ContextManagerOptions _options)
+		{
+			options = _options;
+
+			queueSize = 0;
+
+			PushContext(ExpandQueueSize());
+		}
+
+		public Element GetContext()
+		{
+			Element element = null;
+			for (int i = 0; i < options.SpinCountOnDequeue; ++i)
+			{
+				if (freeQueue.TryDequeue(out element))
+				{
+					return element;
+				}
+
+				//MEMO: 지금 돌아가고 있는 Thread를 잠깐 놔줌. (다른 큐에서 넣어줄 지 모르니)
+				Thread.Sleep(0);
+			}
+
+			// not found on queue.
+			// we have to choose between resizing queue size or just create new one
+			return ExpandQueueSize();
+		}
+
+		public bool PushContext(Element element)
+		{
+			freeQueue.Enqueue(element);
+			return true;
+		}
+
+		private Element ExpandQueueSize()
+		{
+			//FIXME: expand sync with other threads
+			Element[] arr = new Element[options.BucketSize];
+			for (int i = 0; i < arr.Length; ++i)
+			{
+				arr[i] = new Element();
+				if (i != 0)
+				{
+					freeQueue.Enqueue(arr[i]);
+				}
+			}
+			bucket.Enqueue(arr);
+
+			queueSize += options.BucketSize;
+
+			return arr[0];
+		}
+
+		public void Clear()
+		{
+			Element[] result = null;
+			while(bucket.TryDequeue(out result))
+			{
+
+			}
+
+			Element element = null;
+			while(freeQueue.TryDequeue(out element))
+			{
+
+			}
+		}
+
+	}
 }

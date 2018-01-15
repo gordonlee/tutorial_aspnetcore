@@ -3,6 +3,9 @@ using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Threading;
 
+using concurrency.ConcurrentVersion;
+using PerformanceChecker;
+
 namespace concurrency
 {
     class Program
@@ -11,8 +14,14 @@ namespace concurrency
         {
             Console.WriteLine("Hello World!");
 
-			ReadMapMain();			
-        }
+			// ReadMapMain();			
+			var module = new ConcurrentVersionTest();
+
+			module.AddMap();
+			module.ReadMap();
+			module.GetElement();
+			module.PushElement();
+		}
 
 		static void MonitorMain()
 		{
@@ -111,5 +120,99 @@ namespace concurrency
 				Thread.Sleep(rand);
 			}
 		}
-    }
+	}
+
+	
+
+	public class ConcurrentVersionTest
+	{
+		IManager manager = null;
+
+		const int LoopCount = 100000;
+
+		public ConcurrentVersionTest()
+		{
+			ContextManagerOptions options = new ContextManagerOptions();
+			manager = new concurrency.ConcurrentVersion.ContextManager(options);
+		}
+
+		public void AddMap()
+		{
+			ScopeTimerCollector collector = new ScopeTimerCollector();
+
+			
+			for (int i = 0; i < LoopCount; ++i )
+			{
+				var trait = new ScopeTimerTrait();
+				collector.Add(trait);
+				using(var scopeTimer = new ScopeTimer(trait))
+				{
+					manager.CreatePool(i);
+				}
+			}
+
+			collector.Synthesize();
+			Console.WriteLine("AddMap: {0}", collector.ToString());
+		}
+
+		public void ReadMap()
+		{
+			ScopeTimerCollector collector = new ScopeTimerCollector();
+
+			for (int i = 0; i < LoopCount; ++i)
+			{
+				var trait = new ScopeTimerTrait();
+				collector.Add(trait);
+				using (var scopeTimer = new ScopeTimer(trait))
+				{
+					manager.HasPool(i);
+				}
+			}
+
+			collector.Synthesize();
+			Console.WriteLine("ReadMap: {0}", collector.ToString());
+		}
+
+		public void GetElement()
+		{
+			ScopeTimerCollector collector = new ScopeTimerCollector();
+
+			for (int i = 0; i < LoopCount; ++i)
+			{
+				var trait = new ScopeTimerTrait();
+				collector.Add(trait);
+				using (var scopeTimer = new ScopeTimer(trait))
+				{
+					var elem = manager.GetContext(i);
+					if (elem == null)
+					{
+						throw new Exception("Element is null on GetElement()");
+					}
+				}
+			}
+
+			collector.Synthesize();
+			Console.WriteLine("GetContext: {0}", collector.ToString());
+		}
+
+		public void PushElement()
+		{
+			ScopeTimerCollector collector = new ScopeTimerCollector();
+
+			for (int i = 0; i < LoopCount; ++i)
+			{
+				var trait = new ScopeTimerTrait();
+				collector.Add(trait);
+				var element = new Element();
+				using (var scopeTimer = new ScopeTimer(trait))
+				{
+					manager.PushContext(i, element);
+				}
+			}
+
+			collector.Synthesize();
+			Console.WriteLine("PushContext: {0}", collector.ToString());
+		}
+	}
+
 }
