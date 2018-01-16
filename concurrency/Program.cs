@@ -213,6 +213,44 @@ namespace concurrency
 			collector.Synthesize();
 			Console.WriteLine("PushContext: {0}", collector.ToString());
 		}
+
+        const int ThreadCount = 10;
+        public class TestFunctionCallbackParameter
+        {
+            public int Index { get; set; }
+            public ScopeTimerCollector2 Collectors { get; set; }
+            public int LoopSpinCount { get; set; }
+        }
+
+        public void TestFunction()
+        {
+            ScopeTimerCollector2 collectors = new ScopeTimerCollector2();
+
+            var threads = new List<Thread>();
+            for (int i = 0; i < ThreadCount; ++i)
+            {
+                var thread = new Thread(TestFunctionCallback);
+                threads.Add(thread);
+                thread.Start(new TestFunctionCallbackParameter()
+                {
+                    Collectors = collectors,
+                    Index = i,
+                    LoopSpinCount = 10000,
+                });
+            }
+
+            foreach(var thread in threads)
+            {
+                thread.Join();
+            }
+
+        }
+
+        public void TestFunctionCallback(Object obj)
+        {
+            TestFunctionCallbackParameter parameters = (TestFunctionCallbackParameter)obj;
+
+        }
 	}
 
 }
