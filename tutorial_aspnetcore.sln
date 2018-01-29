@@ -23,6 +23,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PerformanceChecker", "Perfo
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "disposable", "disposable\disposable.csproj", "{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "aes_cryptography", "aes_cryptography\aes_cryptography.csproj", "{F4D12B29-C86E-4140-947D-8B3D23BA77DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
