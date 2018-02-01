@@ -7,8 +7,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Scheduler", "Scheduler\Sche
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "multiple_dbcontext_web", "multiple_dbcontext_web\multiple_dbcontext_web.csproj", "{DFAA405C-4319-425B-B78E-275AF1643CA3}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "swagger_import_file", "swagger_import_file\swagger_import_file.csproj", "{331C66B6-B32A-4081-A1A0-2627CC05D21E}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "context_client", "context_client\context_client.csproj", "{59A93ABB-3212-4C53-BCC9-2BE4215AC46D}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "context_client_console", "context_client_console\context_client_console.csproj", "{14DCB06B-5002-474E-9E2A-5D8697ACAD3A}"
@@ -33,6 +31,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "webappcore2", "webappcore2\
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "crytography", "crytography\crytography.csproj", "{E87D64D5-D1D2-4760-AB2C-D2EEF5EB13EE}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "disposable", "disposable\disposable.csproj", "{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "aes_cryptography", "aes_cryptography\aes_cryptography.csproj", "{F4D12B29-C86E-4140-947D-8B3D23BA77DA}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -47,10 +49,6 @@ Global
 		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DFAA405C-4319-425B-B78E-275AF1643CA3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{331C66B6-B32A-4081-A1A0-2627CC05D21E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{331C66B6-B32A-4081-A1A0-2627CC05D21E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{331C66B6-B32A-4081-A1A0-2627CC05D21E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{331C66B6-B32A-4081-A1A0-2627CC05D21E}.Release|Any CPU.Build.0 = Release|Any CPU
 		{59A93ABB-3212-4C53-BCC9-2BE4215AC46D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{59A93ABB-3212-4C53-BCC9-2BE4215AC46D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{59A93ABB-3212-4C53-BCC9-2BE4215AC46D}.Release|Any CPU.ActiveCfg = Release|Any CPU
@@ -87,6 +85,14 @@ Global
 		{E87D64D5-D1D2-4760-AB2C-D2EEF5EB13EE}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{E87D64D5-D1D2-4760-AB2C-D2EEF5EB13EE}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{E87D64D5-D1D2-4760-AB2C-D2EEF5EB13EE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B3772B94-DB08-4FC8-BD1E-D0D42FAB51FB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F4D12B29-C86E-4140-947D-8B3D23BA77DA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F4D12B29-C86E-4140-947D-8B3D23BA77DA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F4D12B29-C86E-4140-947D-8B3D23BA77DA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F4D12B29-C86E-4140-947D-8B3D23BA77DA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
