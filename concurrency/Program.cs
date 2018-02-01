@@ -8,144 +8,50 @@ using PerformanceChecker;
 
 namespace concurrency
 {
-    class Program
-    {
-        static void Main(string[] args)
-        {
-            Console.WriteLine("Hello World!");
-
-			// ReadMapMain();			
-			var module = new ConcurrentVersionTest();
-
-			module.AddMap();
-			module.ReadMap();
-			module.GetElement();
-			module.PushElement();
-		}
-
-		static void MonitorMain()
+	class Program
+	{
+		static void Main(string[] args)
 		{
-			List<Thread> threads = new List<Thread>();
-			for (int i = 0; i < 500; ++i)
+			Console.WriteLine("Hello World!");
+
+			for ( int i = 0; i < 5; ++i)
 			{
-				var thread = new Thread(ThreadProc);
-				threads.Add(thread);
-				thread.Start(i);
-			}
+				var module = new ConcurrentVersionTest();
 
-			while (true)
-			{
-				Console.WriteLine(ContextManager.GetInstance().ToString());
-				Thread.Sleep(1000);
-			}
-		}
-
-		static readonly int ReadMapSize = 100;
-		static int[] ReadMapReadability = new int[ReadMapSize];
-
-		static ConcurrentDictionary<int, int> concurrentDict 
-			= new ConcurrentDictionary<int, int>();
-
-		static void ReadMapMain()
-		{
-			List<Thread> threads = new List<Thread>();
-			for (int i = 0; i < ReadMapSize; ++i)
-			{
-				var thread = new Thread(ReadMapProc);
-				threads.Add(thread);
-				thread.Start(i);
-			}
-
-			string input = "";
-			while (input != "exit")
-			{
-				input = Console.ReadLine();
-				int index = Convert.ToInt32(input);
-				if (concurrentDict.TryAdd(index, index))
-				{
-					Console.WriteLine("{0} TryAdd() Success!!", index);
-				}
-				else
-				{
-					throw new Exception(string.Format("{0} TryAdd() failed.", index));
-				}
-				
-			}
-		}
-
-		static void ReadMapProc(object index)
-		{
-			int key = (int)index;
-			while (true)
-			{
-				int dictValue = -1;
-				if (concurrentDict.TryGetValue(key, out dictValue))
-				{
-					ReadMapReadability[key] = 1;
-					//Console.WriteLine("{0} found key!!", key);
-				}
-				else
-				{
-					ReadMapReadability[key] = 0;
-					// throw new Exception(string.Format("{0} not found key.", key));
-					//Console.WriteLine("{0} not found key.", key);
-				}
-
-				string line = ""; 
-				foreach(var elem in ReadMapReadability)
-				{
-					line += elem.ToString() + ", ";
-				}
-				Console.WriteLine(line);
-
-				Thread.Sleep(1);
-			}
-		}
-
-		static void ThreadProc(object index)
-		{
-			Random rnd1 = new Random();
-			
-			while(true)
-			{
-				int key = (int)index % 5;
-				var context = ContextManager.GetInstance().GetContext(key);
-
-				int rand = rnd1.Next() % 200;
-
-				Thread.Sleep(rand);
-				// Thread.Sleep(10);
-
-				ContextManager.GetInstance().PushContext(key, context);
-				Thread.Sleep(rand);
+				module.AddMap();
+				module.ReadMap();
+				module.GetElement();
+				module.TestFunction();
+				module.PushElement();
 			}
 		}
 	}
 
-	
 
 	public class ConcurrentVersionTest
 	{
 		IManager manager = null;
 
-		const int LoopCount = 100000;
+		const int KeyLoopCount = 10000;
+		const int ValueLoopCount = 300;
 
 		public ConcurrentVersionTest()
 		{
 			ContextManagerOptions options = new ContextManagerOptions();
 			manager = new concurrency.ConcurrentVersion.ContextManager(options);
+			// manager = concurrency.ContextManager.GetInstance();
 		}
 
 		public void AddMap()
 		{
 			ScopeTimerCollector collector = new ScopeTimerCollector();
 
-			
-			for (int i = 0; i < LoopCount; ++i )
+
+			for (int i = 0; i < KeyLoopCount; ++i)
 			{
 				var trait = new ScopeTimerTrait();
 				collector.Add(trait);
-				using(var scopeTimer = new ScopeTimer(trait))
+				using (var scopeTimer = new ScopeTimer(trait))
 				{
 					manager.CreatePool(i);
 				}
@@ -159,7 +65,7 @@ namespace concurrency
 		{
 			ScopeTimerCollector collector = new ScopeTimerCollector();
 
-			for (int i = 0; i < LoopCount; ++i)
+			for (int i = 0; i < KeyLoopCount; ++i)
 			{
 				var trait = new ScopeTimerTrait();
 				collector.Add(trait);
@@ -176,19 +82,25 @@ namespace concurrency
 		public void GetElement()
 		{
 			ScopeTimerCollector collector = new ScopeTimerCollector();
-
-			for (int i = 0; i < LoopCount; ++i)
+			List<Element> list = new List<Element>();
+			for (int i = 0; i < KeyLoopCount; ++i)
 			{
-				var trait = new ScopeTimerTrait();
-				collector.Add(trait);
-				using (var scopeTimer = new ScopeTimer(trait))
+				Element elem = null;
+				for (int j = 0; j < ValueLoopCount; ++j)
 				{
-					var elem = manager.GetContext(i);
-					if (elem == null)
+					var trait = new ScopeTimerTrait();
+					collector.Add(trait);
+
+					using (var scopeTimer = new ScopeTimer(trait))
 					{
-						throw new Exception("Element is null on GetElement()");
+						elem = manager.GetContext(i);
+						if (elem == null)
+						{
+							throw new Exception("Element is null on GetElement()");
+						}
 					}
 				}
+				list.Add(elem);
 			}
 
 			collector.Synthesize();
@@ -199,7 +111,7 @@ namespace concurrency
 		{
 			ScopeTimerCollector collector = new ScopeTimerCollector();
 
-			for (int i = 0; i < LoopCount; ++i)
+			for (int i = 0; i < KeyLoopCount; ++i)
 			{
 				var trait = new ScopeTimerTrait();
 				collector.Add(trait);
@@ -213,6 +125,76 @@ namespace concurrency
 			collector.Synthesize();
 			Console.WriteLine("PushContext: {0}", collector.ToString());
 		}
+
+		const int ThreadCount = 10;
+		public class TestFunctionCallbackParameter
+		{
+			public int Index { get; set; }
+			public ScopeTimerCollector2 Collectors { get; set; }
+			public int LoopSpinCount { get; set; }
+		}
+
+		public void TestFunction()
+		{
+			ScopeTimerCollector2 collectors = new ScopeTimerCollector2();
+
+			var threads = new List<Thread>();
+			for (int i = 0; i < ThreadCount; ++i)
+			{
+				var thread = new Thread(TestFunctionCallback);
+				threads.Add(thread);
+				thread.Start(new TestFunctionCallbackParameter()
+				{
+					Collectors = collectors,
+					Index = i,
+					LoopSpinCount = 1000,
+				});
+			}
+
+			foreach (var thread in threads)
+			{
+				thread.Join();
+			}
+
+			Console.WriteLine("GetContext on multi-threads: {0}", collectors.ToString());
+
+		}
+
+		public void TestFunctionCallback(Object obj)
+		{
+			TestFunctionCallbackParameter parameters = (TestFunctionCallbackParameter)obj;
+			Random rnd1 = new Random();
+
+			ScopeTimerCollector collector = new ScopeTimerCollector();
+			List<Element> list = new List<Element>();
+
+			for ( int i = 0; i < parameters.LoopSpinCount; ++i)
+			{
+				Element elem = null;
+				for (int j = 0; j < ValueLoopCount; ++j)
+				{
+					var trait = new ScopeTimerTrait();
+					collector.Add(trait);
+
+					using (var scopeTimer = new ScopeTimer(trait))
+					{
+						elem = manager.GetContext(rnd1.Next() % parameters.LoopSpinCount);
+						if (elem == null)
+						{
+							throw new Exception("Element is null on GetElement()");
+						}
+					}
+
+					list.Add(elem);
+				}
+				
+			}
+			collector.Synthesize();
+			// Console.WriteLine("GetContext: {0}", collector.ToString());
+
+			parameters.Collectors.Push(collector);
+		}
+
 	}
 
 }

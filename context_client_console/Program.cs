@@ -30,7 +30,7 @@ namespace context_client_console
             {
                 Console.WriteLine("sync: {0}", elem.ToString());
             }
-        }
+		}
 
         static async Task ContextSimpleTestAsync()
         {
@@ -45,7 +45,6 @@ namespace context_client_console
 		{
 			var context = new ServiceContentsContext();
 			context.GetMultipleResultSets();
-
 		}
 
         static async Task<int> AsyncFunction()

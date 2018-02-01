@@ -43,8 +43,8 @@ namespace concurrency
 		Element element;
 	}
 
-    public class ContextManager 
-    {
+    public class ContextManager : IManager
+	{
 		static ContextManager instance = new ContextManager();
 
 		static Dictionary<int, Stack<Element>> dict
@@ -57,9 +57,38 @@ namespace concurrency
 			return instance;
 		}
 
-		public ContextManager()
+		private ContextManager()
 		{
 			
+		}
+		public bool CreatePool(int key)
+		{
+			bool result = false;
+			Monitor.Enter(instance);
+
+			if (dict.ContainsKey(key))
+			{
+				result = false;
+			}
+			else
+			{
+				dict.Add(key, new Stack<Element>());
+				result = true;
+			}
+			Monitor.Exit(instance);
+
+			return result;
+		}
+
+		public bool HasPool(int key)
+		{
+			return dict.ContainsKey(key);
+		}
+
+		bool IManager.PushContext(int key, Element element)
+		{
+			PushContext(key, element);
+			return true;
 		}
 
 		public Element GetContext(int key)
@@ -147,7 +176,7 @@ namespace concurrency.ConcurrentVersion
 	{
 		public ContextManagerOptions()
 		{
-			SpinCountOnDequeue = 1000;
+			SpinCountOnDequeue = 1;
 			OverFlowAction = OverFlowAction.CreateNewOne;
 			BucketSize = 32;
 		}
@@ -161,8 +190,8 @@ namespace concurrency.ConcurrentVersion
 
     public class ContextManager : IManager
     {
-        ConcurrentDictionary<int, ContextPool> dict
-        = new ConcurrentDictionary<int, ContextPool>();
+        ConcurrentDictionary<int, ContextPool2> dict
+        = new ConcurrentDictionary<int, ContextPool2>();
 
         ContextManagerOptions options;
 
@@ -173,13 +202,13 @@ namespace concurrency.ConcurrentVersion
 
         public bool CreatePool(int key)
         {
-            var newQueue = new ContextPool(options);
+            var newQueue = new ContextPool2(options);
             return dict.TryAdd(key, newQueue);
         }
 
 		public bool HasPool(int key)
 		{
-			ContextPool queue = null;
+			ContextPool2 queue = null;
 			if (!dict.TryGetValue(key, out queue))
 			{
 				return false;
@@ -189,7 +218,7 @@ namespace concurrency.ConcurrentVersion
 
         public Element GetContext(int key)
         {
-			ContextPool queue = null;
+			ContextPool2 queue = null;
             if (!dict.TryGetValue(key, out queue))
             {
                 // not found in dictionary
@@ -201,7 +230,7 @@ namespace concurrency.ConcurrentVersion
 
         public bool PushContext(int key, Element element)
         {
-			ContextPool queue = null;
+			ContextPool2 queue = null;
 			if (!dict.TryGetValue(key, out queue))
 			{
                 // not found in dictionary
